@@ -19,7 +19,7 @@ class BookController extends Controller
     {
         $user = User::find(Auth::id());
         return response()->json([
-            'books' => $user->books()->paginate(20)
+            'books' => $user->books()->paginate(10)
         ], Response::HTTP_OK);
     }
 
@@ -28,7 +28,7 @@ class BookController extends Controller
      */
     public function store(BookRequest $request)
     {
-        $datas = $request->validate();
+        $datas = $request->validated();
         $user = User::find(Auth::id());
         $book = new Book($datas);
         $user->books()->save($book);
@@ -43,7 +43,6 @@ class BookController extends Controller
      */
     public function show(Book $book)
     {
-        $book = Book::findOrFail($book);
         return response()->json([
             'book' => BookResource::make($book)
         ], Response::HTTP_OK);
@@ -54,8 +53,7 @@ class BookController extends Controller
      */
     public function update(BookRequest $request, Book $book)
     {
-        $book = Book::findOrFail($book);
-        $book->update($request->validate());
+        $book->update($request->validated());
         return response()->json([
             'message' => 'Book updated successfully.'
         ], Response::HTTP_CREATED);
@@ -66,7 +64,6 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        $book = Book::findOrFail($book);
         $book->delete();
         return response()->json([
             'message' => 'Book deleted successfully.'
